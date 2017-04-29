@@ -50,17 +50,5 @@ test.X =[test.X test.Xtest(:,1).^2];
 correct = sum((h_theta(theta,test.X') >= 0.5 ) == test.ytest);
 fprintf('using logistic regression for theta\''X have %i correct out of %i \n',correct,length(test.Xtest));
 
-%% Question 2
-
-
-%% part a
-clear ; close all; clc;
-emails = load('emaildata2.mat');
-X = [ones(length(emails.X),1) emails.X emails.X(:,1).^2];
-alpha = 0.2;
-num_iters = 10000;
-figure(5)
-suptitle('logistic regression for \theta_0+\theta_1\cdotx_1+\theta_2\cdotx_2')
-[theta,J] = complete_log_reg(X,emails.y,num_iters,alpha,@plot_descision_boundry_quad);
-
+%% Ques
 
