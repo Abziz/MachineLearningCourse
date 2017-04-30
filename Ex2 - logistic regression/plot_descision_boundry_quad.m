@@ -1,4 +1,5 @@
 function [] = plot_descision_boundry_quad( X,theta )
+%plot a decision boundary for quadratic model
     hold on;
     xmin = min(X(:,2))-0.25 ;
     xmax = max(X(:,2))+0.25 ;

@@ -1,5 +1,6 @@
 function []=plotdata(X,y);
 % Plotting the data (X rows) and the labels (y)
+% this function was in the moodle
 
 plot(X(y==0,1),X(y==0,2),'ko','MarkerFaceColor', 'g')
 hold on
