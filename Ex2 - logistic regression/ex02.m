@@ -86,14 +86,14 @@ for i=1:4
     scatter_plot_data(X,emails.y);
     plotDecisionBoundary(theta,X,emails.y);
 end
-%% shit
+%% testing how good it was
 x1=[0.2 0.5];
 x2=[0.5 0.5];
 x1 = mapFeature(x1(1),x1(2));
 x2 = mapFeature(x2(1),x2(2));
 fprintf('h_theta([0.2 0.5]) is a %g  which is more than 0.5  which means its ham\n' ,h_theta(theta,x1));
 fprintf('h_theta([0.5 0.5]) is a %g  which is less than 0.5 means its spam\n' ,h_theta(theta,x2));
-%% last
+%% now we use fminunc to optimize our thetas
 options = optimset('GradObj', 'on', 'MaxIter', num_iters);
 for i=1:4    
     figure(7)
@@ -106,8 +106,9 @@ for i=1:4
     scatter_plot_data(X,emails.y);
     plotDecisionBoundary(theta,X,emails.y);
 end
-
-
+%test how good it was
+fprintf('h_theta([0.2 0.5]) is a %g  which is by far more than 0.5  which means its ham\n' ,h_theta(theta,x1));
+fprintf('h_theta([0.5 0.5]) is a %g  which is by far less than 0.5 means its spam\n' ,h_theta(theta,x2));
 
 
 
