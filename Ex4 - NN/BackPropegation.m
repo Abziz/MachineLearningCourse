@@ -1,19 +1,19 @@
-function [  Thetas , J  ] = BackPropegation(X,y,layers,thetas,max_iter,alpha,lambda)
+function [  Thetas , J  ] = BackPropegation(X,y,layers,alpha,lambda,max_iter,thetas)
     % X - training data - required parameter
     % y - labels of training data - required parameter
     % layers - array of size of each layer - required parameter
     % thetas - cell array of matrices represnting the thetas - defaults
     % using layers parameter with randn
-    % max_iter - number of iterations to run each epoch - default: 5000
+    % max_iter - number of iterations to run each epoch - default: 1500
     % alpha - learning step - default: 0.1
     % lambda - regularization factor - default: 0
     
     HAVE_THETAS = true;
     %% check less important parameters
-    if nargin<7,lambda=0; end % no lambda passed
-    if nargin<6,alpha=1.5;end % no alpha passed
-    if nargin<5,max_iter=5000;end %no max_iter passed
-    if nargin<4,HAVE_THETAS = false;end
+    if nargin<7,HAVE_THETAS = false;end
+    if nargin<6,max_iter=1500;end %no max_iter passed
+    if nargin<5,lambda=0; end % no lambda passed
+    if nargin<4,alpha=1.5;end % no alpha passed
     if nargin<3,error('not enough arguments');end
     %% extract information from input and preallocate
     
@@ -31,7 +31,6 @@ function [  Thetas , J  ] = BackPropegation(X,y,layers,thetas,max_iter,alpha,lam
     for i=1:L                  
       a{i} = zeros(layers(i),1);  
     end
-    y(y==0) = 10;                 %replace 0 with 10
     dt =  cell(1,T);              %contains the derivative of the theta of each layer
     %% start training
     for  iter = 1:max_iter
@@ -60,12 +59,11 @@ function [  Thetas , J  ] = BackPropegation(X,y,layers,thetas,max_iter,alpha,lam
                else
                    delta = thetas{j}'*delta(2:end).*(a{j}.*(1-a{j}));
                end
-               dt{j-1} = dt{j-1} + delta(2:end)*(a{j-1}');
+               dt{j-1} = dt{j-1} + delta(2:end)*(a{j-1}') + (lambda/M)*thetas{j-1};
             end
-            J=J + (-1/M)*((labels(:,y(i))')*log(a{L})+((1-labels(:,y(i))')*log(1-a{L}))) ;
+            J=J + (-1/M)*((labels(:,y(i))')*log(a{L})+((1-labels(:,y(i))')*log(1-a{L})));
         end
-        R = 0;
-        for i = 1:T
+        J = J + (lambda/(2*M))*sumsqr(thetas);
         %% update Thetas
         for i=1:T
            thetas{i} = thetas{i} - (alpha)*(dt{i}./M);
