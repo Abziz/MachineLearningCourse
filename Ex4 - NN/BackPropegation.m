@@ -13,10 +13,10 @@ function [  Thetas , J  ] = BackPropegation(X,y,layers,alpha,lambda,max_iter,the
     if nargin<7,HAVE_THETAS = false;end
     if nargin<6,max_iter=1500;end %no max_iter passed
     if nargin<5,lambda=0; end % no lambda passed
-    if nargin<4,alpha=1.5;end % no alpha passed
+    if nargin<4,alpha=1.5;start_alpha=1.5;end % no alpha passed
     if nargin<3,error('not enough arguments');end
     %% extract information from input and preallocate
-    
+    start_alpha = alpha;        %for saving purposes
     L = length(layers);         %number of layers
     T = L-1;                    %number of theta matrices
     M = length(y);              %number of samples
@@ -27,11 +27,14 @@ function [  Thetas , J  ] = BackPropegation(X,y,layers,alpha,lambda,max_iter,the
         end 
     end
     labels = eye(layers(end));  %matrix of unit vectors for labeling
-    a = cell(1,L);                %contains the column of neurons of each layer
+    a = cell(1,L);              %contains the column of neurons of each layer
     for i=1:L                  
       a{i} = zeros(layers(i),1);  
     end
-    dt =  cell(1,T);              %contains the derivative of the theta of each layer
+    dt =  cell(1,T);            %contains the derivative of the theta of each layer
+    %% heuristic approach
+    best_J = inf;
+    fails = 0;
     %% start training
     for  iter = 1:max_iter
         J = 0;                  %the value of the cost function
@@ -64,11 +67,30 @@ function [  Thetas , J  ] = BackPropegation(X,y,layers,alpha,lambda,max_iter,the
             J=J + (-1/M)*((labels(:,y(i))')*log(a{L})+((1-labels(:,y(i))')*log(1-a{L})));
         end
         J = J + (lambda/(2*M))*sumsqr(thetas);
+        if J < best_J 
+            best_J = J;
+        else
+            fails = fails +1;
+            if fails == 20
+                alpha = 0.9*alpha;
+                fails = 0;
+            end
+        end
         %% update Thetas
         for i=1:T
            thetas{i} = thetas{i} - (alpha)*(dt{i}./M);
         end
-        fprintf('Cost function: %g with prediction of: %g%% \n',J,(sum(P==y)/M*100));
+        fprintf('iteration:%i Cost function: %g with prediction of: %g%% \n',iter,J,(sum(P==y)/M*100));
     end
+    i = 0;
+    fname = ['thetas' num2str(i) '.mat'];
+    while exist(fname,'file')==2
+        i=i+1;
+        fname = ['thetas' num2str(i) '.mat'];
+    end
+    cost = J;                   %for saving purposes
+    iterations = max_iter;      %for saving purposes
     Thetas = thetas;
+    
+    save(fname,'thetas','cost','iterations','start_alpha','alpha','lambda','layers');
 end

@@ -1,6 +1,7 @@
-function [ P , J ] = FeedForwardOnly( X,y,thetas)
-%UNTITLED2 Summary of this function goes here
-%   Detailed explanation goes here
+function [ P ] = FeedForwardOnly( X,y,thetas)
+    % X - input data
+    % y - labels of  input data 
+    % thetas - cell array of weights for each leyer in the net
         M = length(X);
         P = zeros(size(y));
         L = length(thetas)+1;
